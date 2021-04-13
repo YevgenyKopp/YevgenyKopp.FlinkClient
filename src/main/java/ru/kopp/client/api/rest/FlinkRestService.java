@@ -67,7 +67,7 @@ public class FlinkRestService {
     }
 
     public FlinkConfig connect() {
-        HttpGet httpGet = new HttpGet(mainUrl + getFlinkJarsUrl);
+        HttpGet httpGet = new HttpGet(mainUrl + flinkConfigUrl);
         FlinkConfig flinkConfig=new FlinkConfig();
 
         try (CloseableHttpResponse response = httpClient.execute(httpGet)) {

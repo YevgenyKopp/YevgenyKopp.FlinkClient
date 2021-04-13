@@ -8,6 +8,7 @@ import ru.kopp.client.model.jar.FlinkJar;
 import ru.kopp.client.model.jobs.FlinkJob;
 import ru.kopp.client.model.jobs.FlinkJobSubmission;
 import ru.kopp.client.model.plan.FlinkUploadedPlans;
+import ru.kopp.client.model.responses.FlinkConfig;
 
 import java.io.File;
 import java.net.URISyntaxException;
@@ -42,6 +43,10 @@ public class FlinkRestServiceTest {
     public void jarsTest() {
         FlinkUploadedPlans uploadedJarPlans;
         FlinkResponse response;
+
+        //connect
+        FlinkConfig flinkConfig=flinkRestService.connect();
+        Assert.assertNotNull(flinkConfig.getFlinkVersion());
 
         //upload jar
         response = flinkRestService.uploadJar(jarFile);
