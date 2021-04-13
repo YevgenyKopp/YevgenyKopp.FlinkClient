@@ -2,9 +2,9 @@ package ru.kopp.ui.frames;
 
 import ru.kopp.client.api.rest.FlinkResponse;
 import ru.kopp.client.api.rest.FlinkRestService;
+import ru.kopp.client.model.responses.FlinkConfig;
 import ru.kopp.services.FlinkErrorService;
 import ru.kopp.ui.custom.components.common.FlinkBasePanel;
-import ru.kopp.ui.custom.components.common.FlinkErrorDialog;
 import ru.kopp.ui.custom.services.DesignGuide;
 import ru.kopp.ui.custom.services.ResourceService;
 import ru.kopp.ui.custom.services.TextFieldValidator;
@@ -55,11 +55,10 @@ public class ConnectionDialog extends JFrame {
         add(panel);
 
         //Listeners
-        btnConnect.addActionListener(event -> new SwingWorker<FlinkResponse, Void>() {
-            final String url = txtUrl.getText();
+        btnConnect.addActionListener(event -> new SwingWorker<FlinkConfig, Void>() {
 
             @Override
-            protected FlinkResponse doInBackground() {
+            protected FlinkConfig doInBackground() {
                 gif.setVisible(true);
 
                 flinkRestService.setMainUrl(txtUrl.getText());
@@ -70,18 +69,15 @@ public class ConnectionDialog extends JFrame {
             protected void done() {
                 gif.setVisible(false);
                 try {
-                    FlinkResponse response = get();
+                    FlinkConfig flinkConfig = get();
 
                     MainWindow mainWindow = MainWindow.getMainWindow();
+                    mainWindow.setFlinkVersion(flinkConfig.getFlinkVersion());
                     mainWindow.setVisible(false);
                     mainWindow.revalidate();
                     mainWindow.repaint();
                     mainWindow.showWindow();
 
-                    if (response.getStatusCode() != 200) {
-                        response.setShortMessage("Failed to connect!\nURL: " + url);
-                        new FlinkErrorDialog("Connection Failed", response);
-                    }
                     dispose();
 
                 } catch (Exception e) {

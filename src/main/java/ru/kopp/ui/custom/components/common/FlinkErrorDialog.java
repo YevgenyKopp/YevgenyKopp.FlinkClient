@@ -21,6 +21,7 @@ public class FlinkErrorDialog extends JDialog {
         setLayout(new MigLayout("insets 0"));
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setIconImage(Objects.requireNonNull(ResourceService.getImageIcon("squirrel-icon.png")));
+        setModal(true);
 
         //Create Components
         FlinkBasePanel panel = new FlinkBasePanel(new MigLayout("hidemode 3"));

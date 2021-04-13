@@ -18,6 +18,7 @@ import ru.kopp.client.model.jobs.FlinkJob;
 import ru.kopp.client.model.jobs.FlinkJobSubmission;
 import ru.kopp.client.model.jobs.FlinkJobsSet;
 import ru.kopp.client.model.plan.FlinkUploadedPlans;
+import ru.kopp.client.model.responses.FlinkConfig;
 import ru.kopp.services.FlinkErrorService;
 import ru.kopp.services.FlinkLoggerService;
 
@@ -33,6 +34,7 @@ public class FlinkRestService {
 
     private static FlinkRestService flinkRestService;
 
+    private final String flinkConfigUrl = "/config";
     private final String getFlinkJarsUrl = "/jars";
     private final String uploadJarUrl = "upload";
     private final String jarListUrl = "/jars/";
@@ -64,25 +66,30 @@ public class FlinkRestService {
         this.mainUrl = mainUrl;
     }
 
-    public FlinkResponse connect() {
-        HttpGet httpGet = new HttpGet(mainUrl);
+    public FlinkConfig connect() {
+        HttpGet httpGet = new HttpGet(mainUrl + getFlinkJarsUrl);
+        FlinkConfig flinkConfig=new FlinkConfig();
 
         try (CloseableHttpResponse response = httpClient.execute(httpGet)) {
             int status = response.getStatusLine().getStatusCode();
+            HttpEntity entity = response.getEntity();
 
-            if (status == 200)
-                logger.info("Successfully connected on " + mainUrl);
+            JsonAdapter<FlinkConfig> jsonAdapter = moshi.adapter(FlinkConfig.class);
+            flinkConfig=jsonAdapter.fromJson(EntityUtils.toString(entity));
 
-
-            return new FlinkResponse(
-                    status,
-                    response.toString(),
-                    EntityUtils.toString(response.getEntity())
-            );
+            if(flinkConfig==null || flinkConfig.getFlinkVersion()==null)
+                FlinkErrorService.showError(
+                        "HTTP Request Failed",
+                        new FlinkResponse("Failed to connect on " + mainUrl + "!")
+                );
 
         } catch (IOException e) {
-            return new FlinkResponse("Failed to connect on " + mainUrl + "!");
+            FlinkErrorService.showError(
+                    "HTTP Request Failed",
+                    new FlinkResponse("Failed to connect on " + mainUrl + "!")
+            );
         }
+        return flinkConfig;
     }
 
     public void close() {

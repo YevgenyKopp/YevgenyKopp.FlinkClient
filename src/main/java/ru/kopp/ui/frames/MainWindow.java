@@ -21,6 +21,7 @@ public class MainWindow extends JFrame {
     private final JarsListPanel jarsPanel = JarsListPanel.getJarsListPanel();
     private final RunningJobsListPanel runningJobsPanel = RunningJobsListPanel.getJobsListPanel();
     private final CompletedJobsListPanel completedJobsPanel = CompletedJobsListPanel.getJobsListPanel();
+    private String flinkVersion;
 
     private MainWindow() {
     }
@@ -52,7 +53,8 @@ public class MainWindow extends JFrame {
         tabbedPane.addTab("Submit New Job", new ImageIcon(submitIcon), jarsPanel);
         tabbedPane.addTab("Running Jobs", new ImageIcon(playIcon), runningJobsPanel);
         tabbedPane.addTab("Completed Jobs", new ImageIcon(completedIcon), completedJobsPanel);
-
+        add(new FlinkMenuBar(flinkVersion), "pushx,growx,wrap");
+        add(tabbedPane, "push, grow, cell 0 1");
 
         //Listeners
         addWindowListener(new WindowAdapter() {
@@ -63,8 +65,6 @@ public class MainWindow extends JFrame {
         });
 
         //Show Window
-        add(new FlinkMenuBar(), "pushx,growx,wrap");
-        add(tabbedPane, "push, grow");
         pack();
         setLocationRelativeTo(null);
         setVisible(true);
@@ -90,5 +90,9 @@ public class MainWindow extends JFrame {
         jarsPanel.updateList();
         completedJobsPanel.updateList();
         runningJobsPanel.updateList();
+    }
+
+    public void setFlinkVersion(String flinkVersion) {
+        this.flinkVersion = flinkVersion;
     }
 }
